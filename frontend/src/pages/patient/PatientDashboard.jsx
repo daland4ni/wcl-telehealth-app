@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import specializations from '../../data/specializations';
 import { getDoctors } from '../../services/doctorService';
-import { createAppointment, } from '../../services/appointmentService';
+import { createAppointment, getPatientAppointments, cancelAppointment, rescheduleAppointment } from '../../services/appointmentService';
 import { getDoctorAvailability } from '../../services/availabilityService';
 
 import { formatDate } from '../../util/formatDate';
@@ -36,15 +36,44 @@ const PatientDashboard = () => {
 
   const [consentChecked, setConsentChecked] =
     useState(false);
-  const { user, logout } = useAuth();
 
+  const [
+    upcomingAppointments,
+    setUpcomingAppointments,
+  ] = useState([]);
+
+
+  const { user, logout } = useAuth();
+  const [
+    selectedAppointment,
+    setSelectedAppointment,
+  ] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] =
     useState('');
 
   useEffect(() => {
     fetchDoctors();
+    fetchAppointments();
   }, [selectedSpecialization]);
+
+  const fetchAppointments =
+    async () => {
+      try {
+
+        const data =
+          await getPatientAppointments(
+            user._id
+          );
+
+        setUpcomingAppointments(
+          data
+        );
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   const handleViewAvailability =
     async (doctor) => {
@@ -66,17 +95,56 @@ const PatientDashboard = () => {
       }
     };
 
-  const handleSelectSlot = (
-    slot
-  ) => {
-    setSelectedSlot(slot);
+  const handleSelectSlot =
+    async (slot) => {
 
-    setShowAvailabilityModal(
-      false
-    );
+      // RESCHEDULE FLOW
+      if (selectedAppointment) {
 
-    setShowConsentModal(true);
-  };
+        try {
+
+          await rescheduleAppointment(
+            selectedAppointment._id,
+            slot._id
+          );
+
+          alert(
+            'Appointment rescheduled successfully!'
+          );
+
+          setSelectedAppointment(
+            null
+          );
+
+          setShowAvailabilityModal(
+            false
+          );
+
+          fetchAppointments();
+
+          return;
+
+        } catch (error) {
+
+          console.error(error);
+
+          alert(
+            'Reschedule failed.'
+          );
+
+          return;
+        }
+      }
+
+      // NORMAL BOOK FLOW
+      setSelectedSlot(slot);
+
+      setShowAvailabilityModal(
+        false
+      );
+
+      setShowConsentModal(true);
+    };
 
   const handleConfirmBooking =
     async () => {
@@ -102,6 +170,8 @@ const PatientDashboard = () => {
           'Appointment booked successfully!'
         );
 
+        await fetchAppointments();
+
         setShowConsentModal(false);
 
         setConsentChecked(false);
@@ -117,7 +187,32 @@ const PatientDashboard = () => {
       }
     };
 
+  const handleCancelAppointment =
+    async (appointmentId) => {
 
+      try {
+
+        await cancelAppointment(
+          appointmentId
+        );
+
+        alert(
+          'Appointment cancelled.'
+        );
+
+        fetchAppointments();
+
+        fetchDoctors();
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          'Cancellation failed.'
+        );
+      }
+    };
   const fetchDoctors = async () => {
     try {
       const data = await getDoctors(
@@ -130,25 +225,32 @@ const PatientDashboard = () => {
     }
   };
 
-  const handleBookAppointment =
-    async (doctorId) => {
+  const handleReschedule =
+    async (appointment) => {
+
       try {
-        await createAppointment({
-          patient: user._id,
-          doctor: doctorId,
-          appointmentDate:
-            new Date(),
-        });
 
-        alert(
-          'Appointment booked successfully!'
+        const slots =
+          await getDoctorAvailability(
+            appointment.doctor._id
+          );
+
+        setDoctorSlots(slots);
+
+        setSelectedAppointment(
+          appointment
         );
-      } catch (error) {
-        console.error(error);
 
-        alert('Booking failed');
+        setShowAvailabilityModal(
+          true
+        );
+
+      } catch (error) {
+
+        console.error(error);
       }
     };
+
 
   return (
     <div className="min-h-screen bg-[#FCF7F8]">
@@ -278,23 +380,128 @@ const PatientDashboard = () => {
             </section>
 
             {/* UPCOMING APPOINTMENTS */}
-            <section className="bg-white rounded-3xl p-6 shadow-md border border-[#BEBFC5]">
-              <div className="mb-5">
-                <h3 className="text-2xl font-bold text-[#A31621]">
-                  Upcoming Appointments
-                </h3>
+            <section className="mb-10">
 
-                <p className="text-[#4E8098] mt-1">
-                  Your scheduled consultations will appear
-                  here.
-                </p>
-              </div>
+              <h2 className="text-3xl font-bold text-[#A31621] mb-6">
+                Upcoming Appointments
+              </h2>
 
-              <div className="border border-dashed border-[#BEBFC5] rounded-2xl p-6 text-center">
-                <p className="text-[#4E8098]">
-                  No upcoming appointments yet.
-                </p>
-              </div>
+              {upcomingAppointments.length >
+                0 ? (
+
+                <div className="space-y-4">
+
+                  {upcomingAppointments.map(
+                    (appointment) => (
+
+                      <div
+                        key={appointment._id}
+                        className="bg-white rounded-3xl p-6 shadow-md border border-[#BEBFC5]"
+                      >
+
+                        <div className="flex justify-between items-center">
+
+                          <div>
+
+                            <h3 className="text-xl font-bold text-[#A31621]">
+                              Dr. {
+                                appointment
+                                  .doctor.name
+                              }
+                            </h3>
+
+                            <p className="text-[#4E8098]">
+                              {
+                                appointment
+                                  .doctor
+                                  .specialization
+                              }
+                            </p>
+
+                          </div>
+
+                          <span
+                            className={`px-4 py-2 rounded-full text-sm font-semibold ${appointment.status ===
+                              'cancelled'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                              }`}
+                          >
+                            {appointment.status}
+                          </span>
+
+                        </div>
+
+                        <div className="mt-4 text-[#4E8098]">
+
+                          <p>
+                            {formatDate(
+                              appointment.appointmentDate
+                            )}
+                          </p>
+
+                          <p>
+                            {
+                              appointment.startTime
+                            }
+                            {' - '}
+                            {
+                              appointment.endTime
+                            }
+                          </p>
+
+                          <div className="flex gap-3 mt-5">
+
+                            {appointment.status !==
+                              'cancelled' && (
+
+                                <div className="flex gap-3 mt-5">
+
+                                  <button
+                                    onClick={() =>
+                                      handleReschedule(
+                                        appointment
+                                      )
+                                    }
+                                    className="bg-[#4E8098] hover:bg-[#3c6679] text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                                  >
+                                    Reschedule
+                                  </button>
+
+                                  <button
+                                    onClick={() =>
+                                      handleCancelAppointment(
+                                        appointment._id
+                                      )
+                                    }
+                                    className="bg-[#A31621] hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                                  >
+                                    Cancel
+                                  </button>
+
+                                </div>
+
+                              )}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+                    )
+                  )}
+
+                </div>
+
+              ) : (
+
+                <div className="bg-white rounded-3xl p-8 shadow-md border border-[#BEBFC5] text-center text-[#4E8098]">
+
+                  No upcoming appointments.
+
+                </div>
+
+              )}
             </section>
           </div>
 
@@ -404,27 +611,45 @@ const PatientDashboard = () => {
 
               <div className="space-y-3 max-h-[400px] overflow-y-auto">
 
-                {doctorSlots.map((slot) => (
-                  <button
-                    key={slot._id}
-                    disabled={slot.isBooked}
-                    onClick={() =>
-                      handleSelectSlot(slot)
-                    }
-                    className={`w-full border rounded-2xl p-4 text-left transition ${slot.isBooked
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'hover:border-[#4E8098]'
-                      }`}
-                  >
-                    <p className="font-semibold">
-                      {formatDate(slot.date)}
+                {doctorSlots.length > 0 ? (
+
+                  doctorSlots.map((slot) => (
+                    <button
+                      key={slot._id}
+                      disabled={slot.isBooked}
+                      onClick={() =>
+                        handleSelectSlot(slot)
+                      }
+                      className={`w-full border rounded-2xl p-4 text-left transition ${slot.isBooked
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'hover:border-[#4E8098]'
+                        }`}
+                    >
+                      <p className="font-semibold">
+                        {formatDate(slot.date)}
+                      </p>
+
+                      <p>
+                        {slot.startTime} - {slot.endTime}
+                      </p>
+                    </button>
+                  ))
+
+                ) : (
+
+                  <div className="text-center py-10">
+
+                    <p className="text-[#4E8098] text-lg font-medium">
+                      No more available slots.
                     </p>
 
-                    <p>
-                      {slot.startTime} - {slot.endTime}
+                    <p className="text-gray-400 text-sm mt-2">
+                      This doctor currently has no open schedules.
                     </p>
-                  </button>
-                ))}
+
+                  </div>
+
+                )}
 
               </div>
 
@@ -502,6 +727,8 @@ const PatientDashboard = () => {
             </div>
           </div>
         )}
+
+
       </main>
     </div>
   );
