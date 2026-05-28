@@ -5,8 +5,37 @@ import { useEffect, useState } from 'react';
 
 import specializations from '../../data/specializations';
 import { getDoctors } from '../../services/doctorService';
+import { createAppointment, } from '../../services/appointmentService';
+import { getDoctorAvailability } from '../../services/availabilityService';
+
+import { formatDate } from '../../util/formatDate';
+
+
+import Navbar from '../components/Navbar';
 
 const PatientDashboard = () => {
+
+  const [selectedDoctor, setSelectedDoctor] =
+    useState(null);
+
+  const [doctorSlots, setDoctorSlots] =
+    useState([]);
+
+  const [
+    showAvailabilityModal,
+    setShowAvailabilityModal,
+  ] = useState(false);
+
+  const [
+    showConsentModal,
+    setShowConsentModal,
+  ] = useState(false);
+
+  const [selectedSlot, setSelectedSlot] =
+    useState(null);
+
+  const [consentChecked, setConsentChecked] =
+    useState(false);
   const { user, logout } = useAuth();
 
   const [doctors, setDoctors] = useState([]);
@@ -16,6 +45,78 @@ const PatientDashboard = () => {
   useEffect(() => {
     fetchDoctors();
   }, [selectedSpecialization]);
+
+  const handleViewAvailability =
+    async (doctor) => {
+      try {
+        const slots =
+          await getDoctorAvailability(
+            doctor._id
+          );
+
+        setSelectedDoctor(doctor);
+
+        setDoctorSlots(slots);
+
+        setShowAvailabilityModal(
+          true
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const handleSelectSlot = (
+    slot
+  ) => {
+    setSelectedSlot(slot);
+
+    setShowAvailabilityModal(
+      false
+    );
+
+    setShowConsentModal(true);
+  };
+
+  const handleConfirmBooking =
+    async () => {
+      try {
+        if (!consentChecked) {
+          alert(
+            'You must consent before continuing.'
+          );
+
+          return;
+        }
+
+        await createAppointment({
+          patient: user._id,
+          doctor:
+            selectedDoctor._id,
+          slotId:
+            selectedSlot._id,
+          consentToShareRecords: true,
+        });
+
+        alert(
+          'Appointment booked successfully!'
+        );
+
+        setShowConsentModal(false);
+
+        setConsentChecked(false);
+
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          error.response?.data
+            ?.message ||
+          'Booking failed.'
+        );
+      }
+    };
+
 
   const fetchDoctors = async () => {
     try {
@@ -29,29 +130,30 @@ const PatientDashboard = () => {
     }
   };
 
+  const handleBookAppointment =
+    async (doctorId) => {
+      try {
+        await createAppointment({
+          patient: user._id,
+          doctor: doctorId,
+          appointmentDate:
+            new Date(),
+        });
+
+        alert(
+          'Appointment booked successfully!'
+        );
+      } catch (error) {
+        console.error(error);
+
+        alert('Booking failed');
+      }
+    };
+
   return (
     <div className="min-h-screen bg-[#FCF7F8]">
       {/* HEADER */}
-      <header className="bg-white border-b border-[#BEBFC5] px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[#A31621]">
-              TeleHealth Portal
-            </h1>
-
-            <p className="text-[#4E8098] text-sm mt-1">
-              Welcome back, {user?.name}
-            </p>
-          </div>
-
-          <button
-            onClick={logout}
-            className="bg-[#A31621] hover:bg-red-800 text-white px-5 py-2 rounded-xl transition font-medium"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+      <Navbar user={user} logout={logout} />
 
       {/* MAIN */}
       <main className="max-w-7xl mx-auto p-6">
@@ -69,7 +171,7 @@ const PatientDashboard = () => {
             </p>
 
             <Link
-              to="/discover"
+              to="/doctors"
               className="inline-block bg-white text-[#4E8098] font-semibold px-6 py-3 rounded-2xl hover:scale-105 transition"
             >
               Find a Doctor
@@ -101,11 +203,10 @@ const PatientDashboard = () => {
                   onClick={() =>
                     setSelectedSpecialization('')
                   }
-                  className={`px-4 py-2 rounded-full transition border ${
-                    selectedSpecialization === ''
-                      ? 'bg-[#4E8098] text-white border-[#4E8098]'
-                      : 'bg-[#FCF7F8] border-[#BEBFC5]'
-                  }`}
+                  className={`px-4 py-2 rounded-full transition border ${selectedSpecialization === ''
+                    ? 'bg-[#4E8098] text-white border-[#4E8098]'
+                    : 'bg-[#FCF7F8] border-[#BEBFC5]'
+                    }`}
                 >
                   All
                 </button>
@@ -119,12 +220,11 @@ const PatientDashboard = () => {
                           specialization
                         )
                       }
-                      className={`px-4 py-2 rounded-full transition border ${
-                        selectedSpecialization ===
+                      className={`px-4 py-2 rounded-full transition border ${selectedSpecialization ===
                         specialization
-                          ? 'bg-[#4E8098] text-white border-[#4E8098]'
-                          : 'bg-[#FCF7F8] border-[#BEBFC5]'
-                      }`}
+                        ? 'bg-[#4E8098] text-white border-[#4E8098]'
+                        : 'bg-[#FCF7F8] border-[#BEBFC5]'
+                        }`}
                     >
                       {specialization}
                     </button>
@@ -156,9 +256,17 @@ const PatientDashboard = () => {
                         </span>
                       </div>
 
-                      <button className="w-full bg-[#4E8098] hover:bg-[#3d6a7d] text-white py-2 rounded-xl transition font-medium">
+                      <button
+                        onClick={() =>
+                          handleViewAvailability(
+                            doctor
+                          )
+                        }
+                        className="bg-[#A31621] hover:bg-red-800 text-white px-4 py-2 rounded-xl font-semibold transition"
+                      >
                         Book Appointment
                       </button>
+
                     </div>
                   ))
                 ) : (
@@ -283,6 +391,117 @@ const PatientDashboard = () => {
             </section>
           </div>
         </div>
+
+        {/* AVAILABILITY MODAL */}
+        {showAvailabilityModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div className="bg-white rounded-3xl p-8 w-full max-w-2xl">
+
+              <h2 className="text-2xl font-bold text-[#A31621] mb-6">
+                Available Slots
+              </h2>
+
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+
+                {doctorSlots.map((slot) => (
+                  <button
+                    key={slot._id}
+                    disabled={slot.isBooked}
+                    onClick={() =>
+                      handleSelectSlot(slot)
+                    }
+                    className={`w-full border rounded-2xl p-4 text-left transition ${slot.isBooked
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'hover:border-[#4E8098]'
+                      }`}
+                  >
+                    <p className="font-semibold">
+                      {formatDate(slot.date)}
+                    </p>
+
+                    <p>
+                      {slot.startTime} - {slot.endTime}
+                    </p>
+                  </button>
+                ))}
+
+              </div>
+
+              <button
+                onClick={() =>
+                  setShowAvailabilityModal(
+                    false
+                  )
+                }
+                className="mt-6 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl"
+              >
+                Close
+              </button>
+
+            </div>
+          </div>
+        )}
+        {/* CONSENT MODAL */}
+        {showConsentModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div className="bg-white rounded-3xl p-8 w-full max-w-lg">
+
+              <h2 className="text-2xl font-bold text-[#A31621] mb-6">
+                Consent Required
+              </h2>
+
+              <p className="text-[#4E8098] mb-6">
+                By continuing, you consent to sharing your medical records with Dr. {selectedDoctor?.name} for consultation purposes.
+              </p>
+
+              <label className="flex items-start gap-3 mb-6">
+
+                <input
+                  type="checkbox"
+                  checked={consentChecked}
+                  onChange={(e) =>
+                    setConsentChecked(
+                      e.target.checked
+                    )
+                  }
+                  className="mt-1"
+                />
+
+                <span>
+                  I consent to sharing my medical records with this doctor.
+                </span>
+
+              </label>
+
+              <div className="flex gap-4">
+
+                <button
+                  onClick={() =>
+                    setShowConsentModal(
+                      false
+                    )
+                  }
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-xl"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={
+                    handleConfirmBooking
+                  }
+                  className="flex-1 bg-[#A31621] hover:bg-red-800 text-white py-3 rounded-xl font-semibold"
+                >
+                  Confirm Booking
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -5,6 +5,8 @@ const connectDB = require('./config/db');
 
 const doctorRoutes = require('./routes/doctorRoutes');
 const authRoutes = require('./routes/authRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const availabilityRoutes = require('./routes/availabilityRoutes');
 
 dotenv.config();
 connectDB();
@@ -16,7 +18,8 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
-
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/availability', availabilityRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
