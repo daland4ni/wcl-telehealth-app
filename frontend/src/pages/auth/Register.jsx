@@ -13,33 +13,55 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    role: 'patient',
-    specialization: '',
-    licenseNumber: '',
+    birthday: '',
+    contactNumber: '',
+    height: '',
+    weight: '',
+    medicalHistory: '',
+    certifyInformation: false,
+    consentToDataSharing: false,
   });
 
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]:
+        type === 'checkbox'
+          ? checked
+          : value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const data = await register(formData);
+    if (
+      !formData.certifyInformation ||
+      !formData.consentToDataSharing
+    ) {
+      return alert(
+        'You must agree to the certifications before continuing.'
+      );
+    }
 
-      localStorage.setItem('user', JSON.stringify(data));
+    try {
+      const payload = {
+        ...formData,
+        role: 'patient',
+      };
+
+      const data = await register(payload);
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify(data)
+      );
 
       setUser(data);
 
-      if (data.role === 'doctor') {
-        navigate('/doctor/dashboard');
-      } else {
-        navigate('/patient/dashboard');
-      }
+      navigate('/patient/dashboard');
     } catch (error) {
       console.error(error);
 
@@ -51,93 +73,174 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCF7F8] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-[#BEBFC5]">
+    <div className="min-h-screen bg-[#FCF7F8] flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-[#BEBFC5] p-8">
+        {/* HEADER */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-[#A31621]">
-            Create Account
+          <h1 className="text-4xl font-bold text-[#A31621]">
+            Patient Registration
           </h1>
 
           <p className="text-[#4E8098] mt-2">
-            Welcome to your telehealth portal
+            Create your telehealth account
           </p>
         </div>
 
+        {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="space-y-4"
+          className="space-y-5"
         >
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            onChange={handleChange}
-            className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
-          />
+          {/* BASIC INFO */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            onChange={handleChange}
-            className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
-          />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
+          </div>
 
           <input
             type="password"
             name="password"
             placeholder="Password"
+            value={formData.password}
             onChange={handleChange}
-            className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            className="w-full border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
           />
 
-          <select
-            name="role"
-            value={formData.role}
+          {/* PERSONAL INFO */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="date"
+              name="birthday"
+              value={formData.birthday}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
+
+            <input
+              type="text"
+              name="contactNumber"
+              placeholder="Contact Number"
+              value={formData.contactNumber}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
+          </div>
+
+          {/* PHYSICAL INFO */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="height"
+              placeholder="Height (cm)"
+              value={formData.height}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
+
+            <input
+              type="number"
+              name="weight"
+              placeholder="Weight (kg)"
+              value={formData.weight}
+              onChange={handleChange}
+              className="border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+            />
+          </div>
+
+          {/* MEDICAL HISTORY */}
+          <textarea
+            name="medicalHistory"
+            placeholder="Basic Medical History"
+            rows="5"
+            value={formData.medicalHistory}
             onChange={handleChange}
-            className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
-          >
-            <option value="patient">Patient</option>
-            <option value="doctor">Doctor</option>
-          </select>
+            className="w-full border border-[#BEBFC5] rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098] resize-none"
+          />
 
-          {formData.role === 'doctor' && (
-            <>
+          {/* CONSENT */}
+          <div className="space-y-4 bg-[#FCF7F8] border border-[#BEBFC5] rounded-2xl p-5">
+            <label className="flex items-start gap-3 text-sm text-[#4E8098]">
               <input
-                type="text"
-                name="specialization"
-                placeholder="Specialization"
+                type="checkbox"
+                name="certifyInformation"
+                checked={
+                  formData.certifyInformation
+                }
                 onChange={handleChange}
-                className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
+                className="mt-1"
               />
 
-              <input
-                type="text"
-                name="licenseNumber"
-                placeholder="License Number"
-                onChange={handleChange}
-                className="w-full border border-[#BEBFC5] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4E8098]"
-              />
-            </>
-          )}
+              <span>
+                I certify that all information
+                provided is factual and accurate.
+              </span>
+            </label>
 
+            <label className="flex items-start gap-3 text-sm text-[#4E8098]">
+              <input
+                type="checkbox"
+                name="consentToDataSharing"
+                checked={
+                  formData.consentToDataSharing
+                }
+                onChange={handleChange}
+                className="mt-1"
+              />
+
+              <span>
+                I consent to sharing my
+                information with the platform
+                and healthcare professionals.
+              </span>
+            </label>
+          </div>
+
+          {/* BUTTON */}
           <button
             type="submit"
-            className="w-full bg-[#A31621] hover:bg-red-800 transition text-white font-semibold py-3 rounded-xl"
+            className="w-full bg-[#A31621] hover:bg-red-800 transition text-white font-semibold py-4 rounded-2xl"
           >
-            Register
+            Create Patient Account
           </button>
         </form>
 
-        <p className="text-center text-sm text-[#4E8098] mt-6">
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="text-[#A31621] font-semibold hover:underline"
-          >
-            Login
-          </Link>
-        </p>
+        {/* FOOTER */}
+        <div className="text-center mt-6 space-y-2">
+          <p className="text-sm text-[#4E8098]">
+            Already have an account?{' '}
+            <Link
+              to="/login"
+              className="text-[#A31621] font-semibold hover:underline"
+            >
+              Login
+            </Link>
+          </p>
+
+          <p className="text-sm text-[#4E8098]">
+            Are you a doctor?{' '}
+            <Link
+              to="/doctor/register"
+              className="text-[#A31621] font-semibold hover:underline"
+            >
+              Register here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

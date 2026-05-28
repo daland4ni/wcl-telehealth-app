@@ -21,14 +21,55 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ['patient', 'doctor'],
-      required: true,
+      default: 'patient',
     },
 
     specialization: {
       type: String,
     },
 
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+
     licenseNumber: {
+      type: String,
+    },
+
+    // PATIENT FIELDS
+    height: {
+      type: Number,
+    },
+
+    weight: {
+      type: Number,
+    },
+
+    birthday: {
+      type: Date,
+    },
+
+    contactNumber: {
+      type: String,
+    },
+
+    medicalHistory: {
+      type: String,
+    },
+
+    certifyInformation: {
+      type: Boolean,
+      default: false,
+    },
+
+    consentToDataSharing: {
+      type: Boolean,
+      default: false,
+    },
+
+    // FUTURE
+    profilePicture: {
       type: String,
     },
   },
@@ -37,4 +78,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model(
+  'User',
+  userSchema
+);
