@@ -7,6 +7,8 @@ import DoctorRegister from './pages/auth/DoctorRegister';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import PatientDashboard from './pages/patient/PatientDashboard';
 import DoctorDirectory from './pages/patient/DoctorDirectory';
+import DoctorAppointmentHistory from './pages/doctor/DoctorAppointmentHistory';
+import PatientAppointmentHistory from './pages/patient/PatientAppointmentHistory';
 
 
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -39,6 +41,22 @@ function App() {
           element={
             <ProtectedRoute>
               <DoctorDirectory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/history"
+          element={
+            <ProtectedRoute>
+              <DoctorAppointmentHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/history"
+          element={
+            <ProtectedRoute>
+              <PatientAppointmentHistory />
             </ProtectedRoute>
           }
         />
