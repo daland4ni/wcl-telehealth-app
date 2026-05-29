@@ -80,7 +80,7 @@ const PatientDashboard = () => {
               medicalRecords={dashboard.medicalRecords.length}
             />
 
-            <AIInsights />
+            <AIInsights setSelectedSpecialization={setSelectedSpecialization} />
 
             <MedicalRecords
               medicalRecords={dashboard.medicalRecords}

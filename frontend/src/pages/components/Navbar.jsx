@@ -4,7 +4,7 @@ return (
         <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div>
                 <h1 className="text-2xl font-bold text-[#A31621]">
-                    Pulse One
+                    VitaCare
                 </h1>
 
                 <p className="text-[#4E8098] text-sm mt-1">

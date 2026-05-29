@@ -9,6 +9,7 @@ import PatientDashboard from './pages/patient/PatientDashboard';
 import DoctorDirectory from './pages/patient/DoctorDirectory';
 import DoctorAppointmentHistory from './pages/doctor/DoctorAppointmentHistory';
 import PatientAppointmentHistory from './pages/patient/PatientAppointmentHistory';
+import Home from './pages/Home';
 
 
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -20,6 +21,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/doctor/register" element={<DoctorRegister />} />
+        <Route path="/" element={<Home />} />
 
         <Route path="/doctor/dashboard"
           element={
