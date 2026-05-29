@@ -74,11 +74,13 @@ const PatientDashboard = () => {
           {/* RIGHT SIDE */}
           <div className="space-y-6">
 
+            { /* 
             <HealthSummary
               consultations={dashboard.medicalRecords.length}
               prescriptions={dashboard.medicalRecords.length}
               medicalRecords={dashboard.medicalRecords.length}
             />
+            */}
 
             <AIInsights setSelectedSpecialization={setSelectedSpecialization} />
 
