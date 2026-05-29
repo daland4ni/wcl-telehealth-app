@@ -57,6 +57,10 @@ const appointmentSchema =
         ],
         default: 'confirmed',
       },
+      consultationStarted: {
+        type: Boolean,
+        default: false,
+      }
     },
     {
       timestamps: true,

@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import { useDoctorDashboard } from '../../hooks/useDoctorDashboard';
 import { formatDate } from '../../util/formatDate';
 
-import ConsultationModal from './components/ConsultationModal';
 import RecordsModal from './components/RecordsModal';
 import MultiSelectModal from './components/MultiSelectModal';
 import CreateAvailability from './components/CreateAvailability';
@@ -18,6 +17,8 @@ const DoctorDashboard = () => {
 
   const primaryText = "text-[#A31621]";
   const secondaryText = "text-[#4E8098]";
+
+
 
   return (
     <div className="min-h-screen bg-[#FCF7F8]">
@@ -70,20 +71,34 @@ const DoctorDashboard = () => {
           appointments={d.appointments}
           handleStartConsultation={d.handleStartConsultation}
           handleViewRecords={d.handleViewRecords}
+          handleSubmitConsultation={
+            d.handleSubmitConsultation
+          }
+
+          selectedAppointment={
+            d.selectedAppointment
+          }
+
+          diagnosis={d.diagnosis}
+          setDiagnosis={d.setDiagnosis}
+
+          consultationNotes={
+            d.consultationNotes
+          }
+
+          setConsultationNotes={
+            d.setConsultationNotes
+          }
+
+          prescription={d.prescription}
+          setPrescription={
+            d.setPrescription
+          }
+
+          user={user}
         />
 
         {/* MODALS */}
-        <ConsultationModal
-          show={d.showConsultationModal}
-          setShow={d.setShowConsultationModal}
-          diagnosis={d.diagnosis}
-          setDiagnosis={d.setDiagnosis}
-          consultationNotes={d.consultationNotes}
-          setConsultationNotes={d.setConsultationNotes}
-          prescription={d.prescription}
-          setPrescription={d.setPrescription}
-          onSubmit={d.handleSubmitConsultation}
-        />
 
         <RecordsModal
           show={d.showRecordsModal}

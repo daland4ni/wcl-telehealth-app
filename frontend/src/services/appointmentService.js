@@ -83,3 +83,14 @@ export const rescheduleAppointment =
 
         return response.data;
     };
+
+export const startConsultation =
+    async (appointmentId) => {
+
+        const response =
+            await API.put(
+                `/appointments/${appointmentId}/start-consultation`
+            );
+
+        return response.data;
+    };

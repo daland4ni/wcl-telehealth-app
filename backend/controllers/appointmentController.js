@@ -316,11 +316,47 @@ const rescheduleAppointment =
         }
     };
 
+const startConsultation =
+    async (req, res) => {
+
+        try {
+
+            const appointment =
+                await Appointment.findById(
+                    req.params.id
+                );
+
+            if (!appointment) {
+                return res.status(404).json({
+                    message:
+                        'Appointment not found',
+                });
+            }
+
+            appointment.consultationStarted =
+                true;
+
+            await appointment.save();
+
+            res.status(200).json({
+                message:
+                    'Consultation started',
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+    };
+
 module.exports = {
     createAppointment,
     getDoctorAppointments,
     toggleAvailability,
     getPatientAppointments,
     cancelAppointment,
-    rescheduleAppointment
+    rescheduleAppointment,
+    startConsultation,
 };

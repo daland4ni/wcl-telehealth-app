@@ -99,22 +99,62 @@ export const useDoctorDashboard = (userId, isAvailableInitial) => {
     setShowConsultationModal(true);
   };
 
-  const handleSubmitConsultation = async () => {
-    await createMedicalRecord({
-      appointmentId: selectedAppointment._id,
-      diagnosis,
-      consultationNotes,
-      prescription,
-    });
+  const handleSubmitConsultation =
+    async (appointment) => {
 
-    setShowConsultationModal(false);
-    setDiagnosis('');
-    setConsultationNotes('');
-    setPrescription('');
-    setSelectedAppointment(null);
+      try {
 
-    fetchAppointments();
-  };
+        await createMedicalRecord({
+
+          patient:
+            appointment?.patient?._id ||
+            appointment?.patient,
+
+          doctor:
+            appointment?.doctor?._id ||
+            appointment?.doctor ||
+            userId,
+
+          appointment:
+            appointment._id,
+
+          diagnosis,
+
+          consultationNotes,
+
+          prescription,
+        });
+
+        await completeAppointment(
+          appointment._id
+        );
+
+        // refresh queue
+        await fetchAppointments();
+
+        // reset modal state
+        setShowConsultationModal(false);
+
+        setDiagnosis('');
+
+        setConsultationNotes('');
+
+        setPrescription('');
+
+        setSelectedAppointment(null);
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          'Failed to save consultation.'
+        );
+
+        throw error;
+      }
+    };
+
 
   // ---------------- RECORDS ----------------
   const handleViewRecords = async (patientId) => {

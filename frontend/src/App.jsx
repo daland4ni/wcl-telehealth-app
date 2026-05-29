@@ -9,6 +9,7 @@ import PatientDashboard from './pages/patient/PatientDashboard';
 import DoctorDirectory from './pages/patient/DoctorDirectory';
 import DoctorAppointmentHistory from './pages/doctor/DoctorAppointmentHistory';
 import PatientAppointmentHistory from './pages/patient/PatientAppointmentHistory';
+import VideoConsultationPage from './pages/components/VideoConsultation';
 import Home from './pages/Home';
 
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/doctor/register" element={<DoctorRegister />} />
         <Route path="/" element={<Home />} />
+        <Route path="/consultation/:appointmentId" element={<VideoConsultationPage />}/>
 
         <Route path="/doctor/dashboard"
           element={

@@ -51,12 +51,11 @@ const UpcomingAppointments = ({
                   </div>
 
                   <span
-                    className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                      appointment.status ===
-                      'cancelled'
+                    className={`px-4 py-2 rounded-full text-sm font-semibold ${appointment.status ===
+                        'cancelled'
                         ? 'bg-red-100 text-red-700'
                         : 'bg-yellow-100 text-yellow-700'
-                    }`}
+                      }`}
                   >
                     {appointment.status}
                   </span>
@@ -80,33 +79,40 @@ const UpcomingAppointments = ({
                   {appointment.status !==
                     'cancelled' && (
 
-                    <div className="flex gap-3 mt-5">
+                      <div className="flex gap-3 mt-5">
 
-                      <button
-                        onClick={() =>
-                          handleReschedule(
-                            appointment
-                          )
-                        }
-                        className="bg-[#4E8098] hover:bg-[#3c6679] text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
-                      >
-                        Reschedule
-                      </button>
+                        <Link
+                          to={`/consultation/${appointment._id}`}
+                          className="bg-[#A31621] text-white px-4 py-2 rounded-xl"
+                        >
+                          Join Consultation
+                        </Link>
 
-                      <button
-                        onClick={() =>
-                          handleCancelAppointment(
-                            appointment._id
-                          )
-                        }
-                        className="bg-[#A31621] hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
-                      >
-                        Cancel
-                      </button>
+                        <button
+                          onClick={() =>
+                            handleReschedule(
+                              appointment
+                            )
+                          }
+                          className="bg-[#4E8098] hover:bg-[#3c6679] text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                        >
+                          Reschedule
+                        </button>
 
-                    </div>
+                        <button
+                          onClick={() =>
+                            handleCancelAppointment(
+                              appointment._id
+                            )
+                          }
+                          className="bg-[#A31621] hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                        >
+                          Cancel
+                        </button>
 
-                  )}
+                      </div>
+
+                    )}
 
                 </div>
 

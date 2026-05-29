@@ -8,7 +8,8 @@ const {
     toggleAvailability,
     getPatientAppointments,
     cancelAppointment,
-    rescheduleAppointment
+    rescheduleAppointment,
+    startConsultation,
 } = require('../controllers/appointmentController');
 
 
@@ -47,5 +48,10 @@ router.put(
     '/reschedule/:id',
     rescheduleAppointment
 );
+
+router.put(
+    '/:id/start-consultation',
+    startConsultation
+)
 
 module.exports = router;
