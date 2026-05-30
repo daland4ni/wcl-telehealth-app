@@ -9,6 +9,8 @@ import Navbar from './components/Navbar';
 
 const EditProfile = () => {
     const navigate = useNavigate();
+    const [message, setMessage] = useState(null);
+    const [messageType, setMessageType] = useState('success'); // 'success' | 'error'
 
     const {
         user,
@@ -102,23 +104,15 @@ const EditProfile = () => {
                 )
             );
 
-            alert(
-                'Profile updated successfully!'
-            );
-
-            navigate(
-                user.role === 'doctor'
-                    ? '/doctor/dashboard'
-                    : '/patient/dashboard'
-            );
+            showMessage('success', 'Profile updated successfully!');
 
         } catch (error) {
 
             console.error(error);
 
-            alert(
-                error.response?.data
-                    ?.message ||
+            showMessage(
+                'error',
+                error.response?.data?.message ||
                 'Failed to update profile.'
             );
 
@@ -127,6 +121,16 @@ const EditProfile = () => {
             setLoading(false);
 
         }
+    };
+
+    const showMessage = (type, text) => {
+        setMessageType(type);
+        setMessage(text);
+
+        // auto-hide after 3 seconds
+        setTimeout(() => {
+            setMessage(null);
+        }, 3000);
     };
 
     return (
@@ -140,7 +144,16 @@ const EditProfile = () => {
             <main className="max-w-3xl mx-auto p-6">
 
                 <section className="bg-white rounded-3xl p-8 shadow-md border border-[#BEBFC5]">
-
+                    {message && (
+                        <div
+                            className={`mb-6 p-4 rounded-xl text-white font-semibold transition ${messageType === 'success'
+                                    ? 'bg-green-600'
+                                    : 'bg-red-600'
+                                }`}
+                        >
+                            {message}
+                        </div>
+                    )}
                     <h1 className="text-3xl font-bold text-[#A31621] mb-6">
                         Edit Profile
                     </h1>
