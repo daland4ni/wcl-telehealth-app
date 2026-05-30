@@ -25,6 +25,13 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(`https://${req.hostname}${req.url}`);
+  }
+  next();
+});
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
