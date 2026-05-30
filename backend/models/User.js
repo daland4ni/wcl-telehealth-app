@@ -73,9 +73,14 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    // FUTURE
     profilePicture: {
       type: String,
+      default: '',
+    },
+
+    bio: {
+      type: String,
+      default: '',
     },
   },
   {

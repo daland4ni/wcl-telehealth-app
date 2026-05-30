@@ -6,6 +6,7 @@ const {
   createAvailability,
   getDoctorAvailability,
   bookAvailability,
+  deleteAvailability,
 } = require(
   '../controllers/availabilityController'
 );
@@ -29,6 +30,11 @@ router.get(
 router.put(
   '/book/:slotId',
   bookAvailability
+);
+
+router.delete(
+  '/:id',
+  deleteAvailability
 );
 
 module.exports = router;

@@ -1,114 +1,114 @@
 import { Link } from "react-router-dom";
+import NavbarHome from "./components/NavbarHome";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
+  const { user } = useAuth();
+
   return (
-    <div className="min-h-screen bg-[#FCF7F8]">
-
-      {/* NAVBAR (simple version for landing) */}
-      <div className="flex items-center justify-between px-8 py-6">
-
-        <h1 className="text-2xl font-bold text-[#A31621]">
-          VitaCare
-        </h1>
-
-        <div className="flex gap-4 items-center justify-center">
-          <Link
-            to="/login"
-            className="text-[#4E8098] font-semibold hover:underline"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/register"
-            className="bg-[#4E8098] text-white px-4 py-2 rounded-xl font-semibold hover:bg-[#3d6a7d] transition"
-          >
-            Get Started
-          </Link>
-        </div>
-
-      </div>
+    <div className="min-h-screen bg-[#FCF7F8] text-gray-900">
+      <NavbarHome />
 
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-8 py-20 grid md:grid-cols-2 gap-10 items-center">
+      <section className="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
 
+        {/* LEFT */}
         <div>
 
-          <h2 className="text-5xl font-bold text-[#A31621] leading-tight">
-            Healthcare,
-            <br />
-            without the waiting room.
+          <div className="inline-flex items-center gap-2 bg-white border border-[#BEBFC5] px-4 py-2 rounded-full text-sm text-[#4E8098] shadow-sm">
+            🩺 Telehealth made simple
+          </div>
+
+          <h2 className="mt-6 text-5xl md:text-6xl font-extrabold leading-tight text-[#A31621]">
+            Healthcare that feels
+            <span className="text-[#4E8098]"> instant.</span>
           </h2>
 
-          <p className="mt-6 text-[#4E8098] text-lg">
-            Connect instantly with licensed doctors, manage your medical records,
-            and get care from anywhere — all in one secure platform.
+          <p className="mt-6 text-lg text-gray-600 leading-relaxed max-w-xl">
+            Book doctors, get AI-powered guidance, and manage your medical records — all without waiting rooms or hospital stress.
           </p>
 
-          <div className="mt-8 flex gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
 
-            <Link
-              to="/register"
-              className="bg-[#A31621] text-white px-6 py-3 rounded-2xl font-semibold hover:bg-red-800 transition"
-            >
-              Start as Patient
-            </Link>
+            {!user && (
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/register"
+                  className="bg-[#A31621] text-white px-6 py-3 rounded-2xl font-semibold hover:bg-red-800 transition shadow-md"
+                >
+                  Start as Patient
+                </Link>
 
-            <Link
-              to="/register"
-              className="border border-[#4E8098] text-[#4E8098] px-6 py-3 rounded-2xl font-semibold hover:bg-[#4E8098] hover:text-white transition"
-            >
-              Join as Doctor
-            </Link>
+                <Link
+                  to="/doctor/register/"
+                  className="bg-white border border-[#4E8098] text-[#4E8098] px-6 py-3 rounded-2xl font-semibold hover:bg-[#4E8098] hover:text-white transition"
+                >
+                  Join as Doctor
+                </Link>
+              </div>
+            )}
 
+          </div>
+
+          {/* TRUST ROW */}
+          <div className="mt-10 flex items-center gap-6 text-sm text-gray-500">
+            <span>✔ Secure records</span>
+            <span>✔ Verified doctors</span>
+            <span>✔ AI-assisted triage</span>
           </div>
 
         </div>
 
-        {/* HERO IMAGE */}
-        <div className="rounded-3xl overflow-hidden shadow-md border border-[#BEBFC5]">
+        {/* RIGHT VISUAL */}
+        <div className="relative">
 
-          <img
-            src="/images/patient_laptop.jpg"
-            alt="Doctor consultation"
-            className="w-full h-full object-cover"
-          />
+          <div className="absolute -inset-4 bg-gradient-to-tr from-[#A31621]/10 to-[#4E8098]/10 blur-2xl rounded-3xl"></div>
+
+          <div className="relative bg-white rounded-3xl overflow-hidden border border-[#BEBFC5] shadow-xl">
+
+            <img
+              src="/images/patient_laptop.jpg"
+              alt="Telehealth consultation"
+              className="w-full h-[420px] object-cover"
+            />
+
+          </div>
 
         </div>
 
       </section>
 
       {/* FEATURES */}
-      <section className="max-w-7xl mx-auto px-8 py-16">
+      <section className="max-w-7xl mx-auto px-6 py-20">
 
         <h3 className="text-3xl font-bold text-[#A31621] mb-10">
-          Why patients choose us
+          Built for modern healthcare
         </h3>
 
         <div className="grid md:grid-cols-3 gap-6">
 
           {[
             {
-              title: "Instant Appointments",
-              desc: "Book consultations with available doctors in seconds."
+              title: "Instant Doctor Access",
+              desc: "Find specialists and book consultations in seconds."
             },
             {
-              title: "Secure Medical Records",
-              desc: "Your health data is encrypted and always accessible."
+              title: "AI Health Guidance",
+              desc: "Get intelligent recommendations based on symptoms."
             },
             {
-              title: "AI Health Insights",
-              desc: "Get intelligent summaries of your health trends."
+              title: "Unified Medical Records",
+              desc: "All your health history in one secure place."
             }
           ].map((f, i) => (
             <div
               key={i}
-              className="bg-white rounded-3xl p-6 shadow-md border border-[#BEBFC5]"
+              className="bg-white rounded-3xl p-7 border border-[#BEBFC5] shadow-sm hover:shadow-md transition"
             >
               <h4 className="text-[#A31621] font-bold text-xl">
                 {f.title}
               </h4>
-              <p className="text-[#4E8098] mt-2">
+              <p className="text-gray-600 mt-2">
                 {f.desc}
               </p>
             </div>
@@ -119,31 +119,36 @@ const Home = () => {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="bg-white border-y border-[#BEBFC5] py-16">
+      <section className="bg-white border-y border-[#BEBFC5] py-20">
 
-        <div className="max-w-7xl mx-auto px-8">
+        <div className="max-w-7xl mx-auto px-6">
 
-          <h3 className="text-3xl font-bold text-[#A31621] mb-10">
+          <h3 className="text-3xl font-bold text-[#A31621] mb-12">
             How it works
           </h3>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
 
             {[
-              "Create an account",
-              "Book a doctor",
-              "Get treated online"
+              "Create your account",
+              "Describe your symptoms or choose a doctor",
+              "Get care instantly online"
             ].map((step, i) => (
               <div
                 key={i}
-                className="rounded-3xl p-6 border border-[#BEBFC5]"
+                className="relative bg-[#FCF7F8] border border-[#BEBFC5] rounded-3xl p-6"
               >
-                <p className="text-[#4E8098] font-bold">
+                <div className="text-[#4E8098] font-bold text-sm">
                   Step {i + 1}
-                </p>
+                </div>
+
                 <h4 className="text-[#A31621] font-semibold text-lg mt-2">
                   {step}
                 </h4>
+
+                <div className="absolute top-4 right-4 text-[#BEBFC5] text-2xl font-bold">
+                  {i + 1}
+                </div>
               </div>
             ))}
 
@@ -153,43 +158,43 @@ const Home = () => {
 
       </section>
 
-      {/* DOCTOR / PATIENT SPLIT */}
-      <section className="max-w-7xl mx-auto px-8 py-16 grid md:grid-cols-2 gap-6">
+      {/* ROLE CARDS */}
+      <section className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-6">
 
-        <div className="bg-white rounded-3xl p-8 shadow-md border border-[#BEBFC5]">
+        <div className="bg-white rounded-3xl p-8 border border-[#BEBFC5] shadow-sm hover:shadow-md transition">
           <h4 className="text-[#A31621] text-2xl font-bold">
             For Patients
           </h4>
-          <p className="text-[#4E8098] mt-3">
-            Book consultations, view prescriptions, and track your health history.
+          <p className="text-gray-600 mt-3">
+            Book consultations, receive prescriptions, and track your health journey in one place.
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-md border border-[#BEBFC5]">
+        <div className="bg-white rounded-3xl p-8 border border-[#BEBFC5] shadow-sm hover:shadow-md transition">
           <h4 className="text-[#A31621] text-2xl font-bold">
             For Doctors
           </h4>
-          <p className="text-[#4E8098] mt-3">
-            Manage appointments, create medical records, and handle availability.
+          <p className="text-gray-600 mt-3">
+            Manage availability, consultations, and patient records efficiently.
           </p>
         </div>
 
       </section>
 
       {/* FINAL CTA */}
-      <section className="bg-[#A31621] text-white py-20 text-center">
+      <section className="bg-gradient-to-r from-[#A31621] to-red-700 text-white py-24 text-center">
 
-        <h3 className="text-4xl font-bold">
-          Start your telehealth journey today
+        <h3 className="text-4xl font-extrabold">
+          Healthcare, reimagined.
         </h3>
 
-        <p className="mt-4 opacity-90">
-          Join patients and doctors building a smarter healthcare system.
+        <p className="mt-4 text-white/80">
+          Join a smarter, faster, more accessible healthcare system today.
         </p>
 
         <Link
           to="/register"
-          className="inline-block mt-8 bg-white text-[#A31621] px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition"
+          className="inline-block mt-8 bg-white text-[#A31621] px-8 py-3 rounded-2xl font-semibold hover:scale-105 transition shadow-lg"
         >
           Get Started
         </Link>

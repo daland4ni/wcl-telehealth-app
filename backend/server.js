@@ -9,6 +9,7 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const availabilityRoutes = require('./routes/availabilityRoutes');
 const medicalRecordRoutes = require('./routes/medicalRecordRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 connectDB();
 
@@ -32,6 +33,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/medical-records', medicalRecordRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/users', userRoutes);
 const PORT = process.env.PORT || 5000;
 
 

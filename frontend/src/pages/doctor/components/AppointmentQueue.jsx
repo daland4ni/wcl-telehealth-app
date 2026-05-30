@@ -1,5 +1,6 @@
 import { startConsultation } from '../../../services/appointmentService';
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 const AppointmentQueue = ({
   appointments,
@@ -113,10 +114,6 @@ const AppointmentQueue = ({
           false
         );
 
-        alert(
-          'Consultation saved successfully.'
-        );
-
       } catch (error) {
 
         console.error(error);
@@ -130,9 +127,17 @@ const AppointmentQueue = ({
   return (
     <section className="bg-white rounded-3xl p-6 shadow-md border border-[#BEBFC5]">
 
-      <h2 className="text-2xl font-bold text-[#A31621] mb-6">
-        Appointment Queue
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-[#A31621] mb-6">
+          Appointment Queue
+        </h2>
+        <Link
+          to="/doctor/history"
+          className="text-[#4E8098] hover:underline text-sm font-semibold mb-6"
+        >
+          View Appointment History
+        </Link>
+      </div>
 
       {appointments.length > 0 ? (
         <div className="space-y-4">

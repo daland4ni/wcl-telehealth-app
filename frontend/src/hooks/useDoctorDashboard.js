@@ -105,29 +105,15 @@ export const useDoctorDashboard = (userId, isAvailableInitial) => {
       try {
 
         await createMedicalRecord({
-
-          patient:
-            appointment?.patient?._id ||
-            appointment?.patient,
-
-          doctor:
-            appointment?.doctor?._id ||
-            appointment?.doctor ||
-            userId,
-
-          appointment:
-            appointment._id,
-
+          appointmentId: appointment._id,
           diagnosis,
-
           consultationNotes,
-
           prescription,
         });
 
-        await completeAppointment(
+        /*await completeAppointment(
           appointment._id
-        );
+        );*/
 
         // refresh queue
         await fetchAppointments();

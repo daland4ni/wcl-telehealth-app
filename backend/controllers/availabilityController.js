@@ -1,6 +1,7 @@
 const Availability = require(
   '../models/Availability'
 );
+const mongoose = require('mongoose');
 
 
 // CREATE SLOT
@@ -81,8 +82,38 @@ const bookAvailability =
     }
   };
 
+//DELETE AVAILABILITY
+const deleteAvailability = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
+    const slot = await Availability.findById(id);
+
+    if (!slot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    await Availability.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      message: "Deleted successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createAvailability,
   getDoctorAvailability,
   bookAvailability,
+  deleteAvailability,
 };

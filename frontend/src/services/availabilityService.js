@@ -33,3 +33,9 @@ export const bookAvailability =
 
     return response.data;
   };
+
+export const deleteAvailability = async (id) => {
+  console.log("Deleting slot ID:", id);
+  const response = await API.delete(`/availability/${id}`);
+  return response.data;
+};

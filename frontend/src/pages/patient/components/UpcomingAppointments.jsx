@@ -1,11 +1,29 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../util/formatDate';
+import { useState } from 'react';
 
 const UpcomingAppointments = ({
   upcomingAppointments,
   handleReschedule,
   handleCancelAppointment,
 }) => {
+  const [showConsultationModal, setShowConsultationModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleJoinConsultation = (appointment) => {
+    const now = new Date();
+
+    const appointmentDateTime = new Date(
+      `${appointment.appointmentDate} ${appointment.startTime}`
+    );
+
+    if (now < appointmentDateTime) {
+      setShowConsultationModal(true);
+      return;
+    }
+
+    navigate(`/consultation/${appointment._id}`);
+  };
   return (
     <section className="mb-10">
 
@@ -52,9 +70,9 @@ const UpcomingAppointments = ({
 
                   <span
                     className={`px-4 py-2 rounded-full text-sm font-semibold ${appointment.status ===
-                        'cancelled'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-yellow-100 text-yellow-700'
+                      'cancelled'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
                       }`}
                   >
                     {appointment.status}
@@ -81,12 +99,12 @@ const UpcomingAppointments = ({
 
                       <div className="flex gap-3 mt-5">
 
-                        <Link
-                          to={`/consultation/${appointment._id}`}
+                        <button
+                          onClick={() => handleJoinConsultation(appointment)}
                           className="bg-[#A31621] text-white px-4 py-2 rounded-xl"
                         >
                           Join Consultation
-                        </Link>
+                        </button>
 
                         <button
                           onClick={() =>
@@ -128,6 +146,32 @@ const UpcomingAppointments = ({
           No upcoming appointments.
         </div>
 
+      )}
+
+      {showConsultationModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-xl">
+
+            <h2 className="text-xl font-bold text-[#A31621]">
+              Consultation Not Available Yet
+            </h2>
+
+            <p className="mt-3 text-[#4E8098]">
+              You can only join the consultation once its
+              scheduled date and start time have arrived.
+            </p>
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowConsultationModal(false)}
+                className="bg-[#A31621] text-white px-4 py-2 rounded-xl"
+              >
+                Okay
+              </button>
+            </div>
+
+          </div>
+        </div>
       )}
 
     </section>

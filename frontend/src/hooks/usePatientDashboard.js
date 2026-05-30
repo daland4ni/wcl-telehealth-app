@@ -3,6 +3,8 @@ import {
   getDoctors,
 } from '../services/doctorService';
 
+import { getDoctorAppointments } from '../services/appointmentService';
+
 import {
   getPatientAppointments,
   createAppointment,
@@ -43,6 +45,12 @@ export const usePatientDashboard = (userId, selectedSpecialization) => {
     setDoctors(data);
   };
 
+
+  const fetchRecords = async () => {
+    const data = await getPatientRecords(userId);
+    setMedicalRecords(data);
+  };
+
   const fetchAppointments = async () => {
     const data = await getPatientAppointments(userId);
 
@@ -53,17 +61,32 @@ export const usePatientDashboard = (userId, selectedSpecialization) => {
     );
   };
 
-  const fetchRecords = async () => {
-    const data = await getPatientRecords(userId);
-    setMedicalRecords(data);
-  };
-
   // ---------------- ACTIONS ----------------
   const handleViewAvailability = async (doctor) => {
-    const slots = await getDoctorAvailability(doctor._id);
-    setSelectedDoctor(doctor);
-    setDoctorSlots(slots);
-    setShowAvailabilityModal(true);
+    try {
+      const [slots, appointments] = await Promise.all([
+        getDoctorAvailability(doctor._id),
+        getDoctorAppointments(doctor._id)
+      ]);
+
+      const bookedSet = new Set(
+        appointments.map(a =>
+          `${a.appointmentDate}_${a.startTime}`
+        )
+      );
+
+      const availableOnly = slots.filter(slot => {
+        const key = `${slot.date}_${slot.startTime}`;
+        return !bookedSet.has(key);
+      });
+
+      setSelectedDoctor(doctor);
+      setDoctorSlots(availableOnly);
+      setShowAvailabilityModal(true);
+
+    } catch (err) {
+      console.error("Failed to load availability", err);
+    }
   };
 
   const handleSelectSlot = async (slot) => {

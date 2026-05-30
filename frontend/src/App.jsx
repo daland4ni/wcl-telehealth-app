@@ -10,6 +10,7 @@ import DoctorDirectory from './pages/patient/DoctorDirectory';
 import DoctorAppointmentHistory from './pages/doctor/DoctorAppointmentHistory';
 import PatientAppointmentHistory from './pages/patient/PatientAppointmentHistory';
 import VideoConsultationPage from './pages/components/VideoConsultation';
+import EditProfile from './pages/EditProfile';
 import Home from './pages/Home';
 
 
@@ -23,7 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/doctor/register" element={<DoctorRegister />} />
         <Route path="/" element={<Home />} />
-        <Route path="/consultation/:appointmentId" element={<VideoConsultationPage />}/>
+        <Route path="/consultation/:appointmentId" element={<VideoConsultationPage />} />
 
         <Route path="/doctor/dashboard"
           element={
@@ -61,6 +62,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PatientAppointmentHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/edit"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
             </ProtectedRoute>
           }
         />

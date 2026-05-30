@@ -41,13 +41,6 @@ const PatientDashboard = () => {
           <p className="opacity-90 mb-6">
             Manage appointments, records, and insights in one place.
           </p>
-
-          <Link
-            to="/doctors"
-            className="inline-block bg-white text-[#4E8098] px-6 py-3 rounded-2xl font-semibold"
-          >
-            Find a Doctor
-          </Link>
         </section>
 
         {/* GRID */}
@@ -55,7 +48,11 @@ const PatientDashboard = () => {
 
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-6">
-
+            <UpcomingAppointments
+              upcomingAppointments={dashboard.upcomingAppointments}
+              handleReschedule={dashboard.handleReschedule}
+              handleCancelAppointment={dashboard.handleCancelAppointment}
+            />
             <DoctorDiscovery
               doctors={dashboard.doctors}
               selectedSpecialization={selectedSpecialization}
@@ -63,11 +60,7 @@ const PatientDashboard = () => {
               handleViewAvailability={dashboard.handleViewAvailability}
             />
 
-            <UpcomingAppointments
-              upcomingAppointments={dashboard.upcomingAppointments}
-              handleReschedule={dashboard.handleReschedule}
-              handleCancelAppointment={dashboard.handleCancelAppointment}
-            />
+
 
           </div>
 
@@ -87,21 +80,6 @@ const PatientDashboard = () => {
             <MedicalRecords
               medicalRecords={dashboard.medicalRecords}
             />
-
-            {/* EMERGENCY */}
-            <section className="bg-[#A31621] rounded-3xl p-6 text-white shadow-md">
-              <h3 className="text-xl font-bold mb-2">
-                Emergency Assistance
-              </h3>
-
-              <p className="text-sm opacity-90 mb-4">
-                Contact emergency services for urgent medical situations.
-              </p>
-
-              <button className="w-full bg-white text-[#A31621] font-semibold py-3 rounded-2xl">
-                View Emergency Contacts
-              </button>
-            </section>
 
           </div>
         </div>

@@ -1,3 +1,4 @@
+console.log('medicalRecordRoutes loaded');
 const express =
   require('express');
 
@@ -26,6 +27,10 @@ router.get(
   '/doctor/:doctorId',
   getDoctorRecords
 );
+
+router.get('/test', (req, res) => {
+  res.json({ message: 'Medical records route works' });
+});
 
 module.exports =
   router;

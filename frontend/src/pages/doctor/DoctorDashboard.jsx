@@ -1,12 +1,11 @@
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import { useDoctorDashboard } from '../../hooks/useDoctorDashboard';
-import { formatDate } from '../../util/formatDate';
 
 import RecordsModal from './components/RecordsModal';
-import MultiSelectModal from './components/MultiSelectModal';
-import CreateAvailability from './components/CreateAvailability';
+//import MultiSelectModal from './components/MultiSelectModal';
 import AppointmentQueue from './components/AppointmentQueue';
+import AvailabilityCalendar from './components/AvailabilityCalendar';
 
 const DoctorDashboard = () => {
   const { user, logout } = useAuth();
@@ -44,7 +43,9 @@ const DoctorDashboard = () => {
           </div>
 
           <div className={card}>
-            <p className={`text-sm ${secondaryText} mb-3`}>Availability</p>
+            <p className={`text-sm ${secondaryText} mb-3`}>
+              Availability
+            </p>
 
             <button
               onClick={d.handleToggleAvailability}
@@ -57,46 +58,34 @@ const DoctorDashboard = () => {
 
         </div>
 
-        <CreateAvailability
-          selectedDate={d.selectedDate}
-          setSelectedDate={d.setSelectedDate}
-          selectedTimeSlot={d.selectedTimeSlot}
-          setSelectedTimeSlot={d.setSelectedTimeSlot}
-          handleCreateSlot={d.handleCreateSlot}
-          setShowMultiSelectModal={d.setShowMultiSelectModal}
-          formatDate={formatDate}
-        />
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-        <AppointmentQueue
-          appointments={d.appointments}
-          handleStartConsultation={d.handleStartConsultation}
-          handleViewRecords={d.handleViewRecords}
-          handleSubmitConsultation={
-            d.handleSubmitConsultation
-          }
+          <div className="w-full lg:w-1/2">
+            <AvailabilityCalendar
+              selectedSlots={d.selectedSlots}
+              setSelectedSlots={d.setSelectedSlots}
+              doctorId={user?._id}
+            />
+          </div>
 
-          selectedAppointment={
-            d.selectedAppointment
-          }
+          <div className="w-full lg:w-1/2">
+            <AppointmentQueue
+              appointments={d.appointments}
+              handleStartConsultation={d.handleStartConsultation}
+              handleViewRecords={d.handleViewRecords}
+              handleSubmitConsultation={d.handleSubmitConsultation}
+              selectedAppointment={d.selectedAppointment}
+              diagnosis={d.diagnosis}
+              setDiagnosis={d.setDiagnosis}
+              consultationNotes={d.consultationNotes}
+              setConsultationNotes={d.setConsultationNotes}
+              prescription={d.prescription}
+              setPrescription={d.setPrescription}
+              user={user}
+            />
+          </div>
 
-          diagnosis={d.diagnosis}
-          setDiagnosis={d.setDiagnosis}
-
-          consultationNotes={
-            d.consultationNotes
-          }
-
-          setConsultationNotes={
-            d.setConsultationNotes
-          }
-
-          prescription={d.prescription}
-          setPrescription={
-            d.setPrescription
-          }
-
-          user={user}
-        />
+        </div>
 
         {/* MODALS */}
 
@@ -104,14 +93,6 @@ const DoctorDashboard = () => {
           show={d.showRecordsModal}
           setShow={d.setShowRecordsModal}
           records={d.selectedPatientRecords}
-        />
-
-        <MultiSelectModal
-          show={d.showMultiSelectModal}
-          setShow={d.setShowMultiSelectModal}
-          selectedSlots={d.selectedSlots}
-          setSelectedSlots={d.setSelectedSlots}
-          handleCreateMultipleSlots={d.handleCreateMultipleSlots}
         />
 
       </main>
