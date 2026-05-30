@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:5173',
-      'https://your-app.vercel.app'
+      'https://wcl-telehealth-app.vercel.app'
     ],
     credentials: true,
   })
