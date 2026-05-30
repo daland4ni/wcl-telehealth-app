@@ -93,6 +93,7 @@ const DoctorDashboard = () => {
           show={d.showRecordsModal}
           setShow={d.setShowRecordsModal}
           records={d.selectedPatientRecords}
+          patient={d.selectedPatient}
         />
 
       </main>

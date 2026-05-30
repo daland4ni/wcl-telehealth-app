@@ -14,6 +14,8 @@ import {
   getPatientRecords,
 } from '../services/medicalRecordService';
 
+import { getUserById } from '../services/userService';
+
 export const useDoctorDashboard = (userId, isAvailableInitial) => {
 
   const [appointments, setAppointments] = useState([]);
@@ -34,6 +36,7 @@ export const useDoctorDashboard = (userId, isAvailableInitial) => {
   // records modal
   const [showRecordsModal, setShowRecordsModal] = useState(false);
   const [selectedPatientRecords, setSelectedPatientRecords] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   // multi-slot
   const [showMultiSelectModal, setShowMultiSelectModal] = useState(false);
@@ -145,8 +148,10 @@ export const useDoctorDashboard = (userId, isAvailableInitial) => {
   // ---------------- RECORDS ----------------
   const handleViewRecords = async (patientId) => {
     const data = await getPatientRecords(patientId);
+    const patient = await getUserById(patientId);
 
     setSelectedPatientRecords(data);
+    setSelectedPatient(patient);
     setShowRecordsModal(true);
   };
 
@@ -173,6 +178,7 @@ export const useDoctorDashboard = (userId, isAvailableInitial) => {
     showRecordsModal,
     setShowRecordsModal,
     selectedPatientRecords,
+    selectedPatient,
 
     showMultiSelectModal,
     setShowMultiSelectModal,

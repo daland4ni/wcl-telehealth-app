@@ -1,5 +1,5 @@
 const upload = require('../middleware/uploadMiddleware');
-const { updateProfile } = require('../controllers/userController');
+const { updateProfile, getUserById } = require('../controllers/userController');
 
 const express =
   require('express');
@@ -12,6 +12,9 @@ router.put(
   upload.single('profilePicture'),
   updateProfile
 );
+
+
+router.get('/:id', getUserById);
 
 module.exports =
   router;

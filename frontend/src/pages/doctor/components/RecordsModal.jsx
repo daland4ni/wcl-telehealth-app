@@ -1,9 +1,11 @@
 import { formatDate } from '../../../util/formatDate';
 
+
 const RecordsModal = ({
   show,
   setShow,
   records,
+  patient,
 }) => {
   if (!show) return null;
 
@@ -21,6 +23,20 @@ const RecordsModal = ({
             ✕
           </button>
         </div>
+
+        <h3 className="text-lg font-bold text-[#A31621] mb-2">
+          Basic Medical History
+        </h3>
+
+        <p className="text-[#4E8098] whitespace-pre-wrap mb-4">
+          {patient?.medicalHistory?.trim()
+            ? patient.medicalHistory
+            : 'No medical history provided.'}
+        </p>
+
+        <h3 className="text-lg font-bold text-[#A31621] mb-2">
+          Past Appointments and Notes
+        </h3>
 
         {records.length > 0 ? (
           records.map((r) => (

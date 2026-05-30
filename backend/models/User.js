@@ -82,6 +82,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+
+    medicalHistory: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
