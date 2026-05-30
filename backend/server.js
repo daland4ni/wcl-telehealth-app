@@ -16,7 +16,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: ['https://your-project.vercel.app', 'http://localhost:3000'], // Replace with your actual Vercel URL
+  origin: ['https://wcl-telehealth-app.vercel.app','https://wcl-telehealth-app.onrender.com','http://localhost:3000'], // Replace with your actual Vercel URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
